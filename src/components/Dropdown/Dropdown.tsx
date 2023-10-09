@@ -9,7 +9,7 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaCheck, FaChevronDown } from "react-icons/fa6";
+import { FaChevronDown } from "react-icons/fa6";
 
 type DropDownContextType = {
   registerItem: (ref: React.RefObject<HTMLButtonElement>) => void;
