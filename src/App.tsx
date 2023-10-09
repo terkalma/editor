@@ -19,6 +19,7 @@ function App() {
               throw error;
             },
             theme: {
+              quote: "not-italic",
               text: {
                 underline: "underline"
               }
