@@ -9,7 +9,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaChevronDown } from "react-icons/fa6";
 
 type DropDownContextType = {
   registerItem: (ref: React.RefObject<HTMLButtonElement>) => void;
@@ -136,23 +135,22 @@ function DropDownItems({
 export default function DropDown({
   stopCloseOnClickSelf,
   options,
-  initialValue,
+  currentValue,
   onOptionChange,
   btnLabel,
   btnClassName,
 }: {
   stopCloseOnClickSelf?: boolean;
   options: Value[];
-  initialValue: string;
+  currentValue: string;
   onOptionChange: (value: Value) => void;
   btnLabel?: (value: Value) => React.ReactNode;
   btnClassName?: string
 }): JSX.Element {
+
   const dropDownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [showDropDown, setShowDropDown] = useState(false);
-  const defaultValue = options.find((option: Value) => option.value === initialValue) || options[0];
-  const [value, setValue] = useState<Value>(defaultValue);
   const handleClose = () => {
     setShowDropDown(false);
     if (buttonRef && buttonRef.current) {
@@ -214,22 +212,18 @@ export default function DropDown({
     };
   }, [buttonRef, dropDownRef, showDropDown]);
 
+  const currentOption = options.find((option) => option.value === currentValue) || options[0];
+
   return (
     <>
       <button
         type="button"
-        aria-label={value.label}
+        aria-label={currentOption.label}
         onClick={() => setShowDropDown(!showDropDown)}
         ref={buttonRef}
-        className={`${btnClassName} flex max-w-[200px] cursor-pointer items-center bg-white px-2 py-2 transition-all hover:bg-[#dddddd]`}
+        className={`${btnClassName} flex max-w-[200px] cursor-pointer bg-gray-100 px-2 py-2 transition-all hover:bg-gray-400`}
       >
-        {btnLabel ? btnLabel(value) : <span className="text dropdown-button-text">{value.label}</span>}
-        <FaChevronDown
-          style={{
-            transform: `rotate(${showDropDown ? "180deg" : "0"})`,
-          }}
-          className={"ml-3 h-4 w-4 transition-transform ease-in-out"}
-        />
+        {btnLabel ? btnLabel(currentOption) : <span>{currentOption.label}</span>}
       </button>
       {showDropDown &&
         createPortal(
@@ -238,25 +232,24 @@ export default function DropDown({
               let borderRadius = "";
 
               if (index === 0) {
-                borderRadius = "rounded-t-[5px]";
+                borderRadius = "rounded-t-lg";
               } else if (index === options.length - 1) {
-                borderRadius = "rounded-b-[5px]";
+                borderRadius = "rounded-b-lg";
               }
 
               return (
                 <DropDownItem
                   key={option.value}
                   onClick={() => {
-                    setValue(option);
                     onOptionChange(option);
                   }}
                   className={`flex w-full px-2 py-2 hover:bg-[#dddddd] ${
-                    value == option ? "bg-[#eeeeee]" : "bg-white"
+                    currentValue == option.value ? "bg-[#eeeeee]" : "bg-white"
                   } ${borderRadius}`}
                 >
                   <>
                     {option.icon ? option.icon : null}
-                    <span className={`block ${option.icon ? 'mr-2' : ''} truncate ${value == option ? "font-medium" : "font-thin"} `}>
+                    <span className={`block ${option.icon ? 'ml-2' : ''} truncate ${currentValue == option.value ? "font-medium" : "font-thin"} `}>
                       {option.label}
                     </span>
                   </>
